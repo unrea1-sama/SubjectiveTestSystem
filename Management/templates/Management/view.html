@@ -1,0 +1,27 @@
+{% extends "./template.html" %}
+
+{% block content %}
+    <div class="m-5">
+        {% for question in subjective_test.question_set.all %}
+            <div class="card">
+                <div class="card-header">{{ question.get_current_question_type_str }} Question</div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted"></h6>
+                    <p class="card-text">{{ question.text }}</p>
+                    <ul class="list-group list-group-flush">
+                    {% for sample in question.sample_set.all %}
+                        <li class="list-group-item">
+                        {% if sample.file_type %}
+                            <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support video!</video>
+                        {% else %}
+                            <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support audio!</audio>
+                        {% endif %}
+                        <p class="mb-0">{{ sample.text }}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

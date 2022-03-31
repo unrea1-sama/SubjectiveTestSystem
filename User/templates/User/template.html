@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+<body class="d-flex flex-column h-100">
+
+    <header>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'User:index' %}">Subjective Test System</a>
+                <a style="color: white" href="{% url 'User:logout' %}"><button class="btn btn-light">Logout</button></a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Begin page content -->
+    <main role="main" class="flex-shrink-0 mt-3">
+        <div class="container mt-5">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer mt-auto py-3 fixed-bottom bg-primary">
+        <div class="container">
+            <span class="text-white"></span>
+        </div>
+    </footer>
+
+
+</body>

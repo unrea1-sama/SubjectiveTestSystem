@@ -1,0 +1,174 @@
+{% extends "./template.html" %}
+
+{% block content %}
+{% load ABX %}
+{% load MOS %}
+{% load CMOS %}
+<form method='post' action="{% url 'User:view' subjective_test.id %}" class="form">
+    {% csrf_token %}
+    <div class="card m-5">
+        {% for question in subjective_test.question_set.all %}
+        {% if question.type == 0 %}
+        <div class="card m-1">
+            <div class="card-header">{{ question.get_current_question_type_str }} Question</div>
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted"></h6>
+                <p class="card-text">{{ question.text }}</p>
+                <ul class="list-group list-group-flush">
+                    {% for sample in question.sample_set.all %}
+                    <li class="list-group-item">
+                        <p class="mb-0">{{ sample.text }}</p>
+                        <div>
+                            {% if sample.file_type %}
+                            <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                                video!</video>
+                            {% else %}
+                            <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                                audio!</audio>
+                            {% endif %} {{ sample.id }}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div>
+                    {% for sample in question.sample_set.all %}
+                    {% if sample.score %}
+                    <label>
+                        <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id }}"
+                            value="{{ sample.id }}" required {% is_ABX_answer user subjective_test question sample.id as label %} {% if label %}checked{% endif %}>
+                        {{ sample.id }}
+                    </label>
+                    {% endif %}
+                    {% endfor %}
+                    <label>
+                        <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id }}"
+                            value="0" required {% is_ABX_answer user subjective_test question 0 as label %} {% if label %}checked{% endif %}>
+                        NP
+                    </label>
+                </div>
+
+            </div>
+        </div>
+        {% elif question.type == 1%}
+        <div class="card m-1">
+            <div class="card-header">{{ question.get_current_question_type_str }} Question</div>
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted"></h6>
+                <p class="card-text">{{ question.text }}</p>
+                <ul class="list-group list-group-flush">
+                    {% for sample in question.sample_set.all %}
+                    <li class="list-group-item">
+                        {% if sample.file_type %}
+                        <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                            video!</video>
+                        {% else %}
+                        <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                            audio!</audio>
+                        {% endif %}
+                        <p class="mb-0">{{ sample.text }}</p>
+                        <div>
+                            {% if sample.score %}
+                            <label>
+                                <input type='radio'
+                                    name="{{question.get_current_question_type_str}}-{{ question.id }}-{{ sample.id }}"
+                                    value="1" required {% is_MOS_answer user subjective_test question sample 1 as label %}{% if label %}checked{% endif %}>
+                                1
+                            </label>
+                            <label>
+                                <input type='radio'
+                                    name="{{question.get_current_question_type_str}}-{{ question.id }}-{{ sample.id }}"
+                                    value="2" required {% is_MOS_answer user subjective_test question sample 2 as label %}{% if label %}checked{% endif %}>
+                                2
+                            </label>
+                            <label>
+                                <input type='radio'
+                                    name="{{question.get_current_question_type_str}}-{{ question.id }}-{{ sample.id }}"
+                                    value="3" required {% is_MOS_answer user subjective_test question sample 3 as label %}{% if label %}checked{% endif %}>
+                                3
+                            </label>
+                            <label>
+                                <input type='radio'
+                                    name="{{question.get_current_question_type_str}}-{{ question.id }}-{{ sample.id }}"
+                                    value="4" required {% is_MOS_answer user subjective_test question sample 4 as label %}{% if label %}checked{% endif %}>
+                                4
+                            </label>
+                            <label>
+                                <input type='radio'
+                                    name="{{question.get_current_question_type_str}}-{{ question.id }}-{{ sample.id }}"
+                                    value="5" required {% is_MOS_answer user subjective_test question sample 5 as label %}{% if label %}checked{% endif %}>
+                                5
+                            </label>
+                            {% endif %}
+                        </div>
+                    </li>
+
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% elif question.type == 2%}
+        <div class="card m-1">
+            <div class="card-header">{{ question.get_current_question_type_str }} Question</div>
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted"></h6>
+                <p class="card-text">{{ question.text }}</p>
+                <ul class="list-group list-group-flush">
+                    {% for sample in question.sample_set.all %}
+                    <li class="list-group-item">
+                        <p class="mb-0">{{ sample.text }}</p>
+                        <div>
+                            {% if sample.file_type %}
+                            <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                                video!</video>
+                            {% else %}
+                            <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                                audio!</audio>
+                            {% endif %} {{ sample.id }}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <label>
+                    <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id  }}" value="-3"
+                        required {% is_CMOS_answer user subjective_test question -3  as label %}{% if label %}checked{% endif %}>
+                    -3
+                </label>
+                <label>
+                    <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id  }}" value="-2"
+                        required {% is_CMOS_answer user subjective_test question -2  as label %}{% if label %}checked{% endif %}>
+                    -2
+                </label>
+                <label>
+                    <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id  }}" value="-1"
+                        required {% is_CMOS_answer user subjective_test question -1  as label %}{% if label %}checked{% endif %}>
+                    -1
+                </label>
+                <label>
+                    <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id  }}" value="0"
+                        required {% is_CMOS_answer user subjective_test question 0  as label %}{% if label %}checked{% endif %}>
+                    0
+                </label>
+                <label>
+                    <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id  }}" value="1"
+                        required {% is_CMOS_answer user subjective_test question 1  as label %}{% if label %}checked{% endif %}>
+                    1
+                </label>
+                <label>
+                    <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id  }}" value="2"
+                        required {% is_CMOS_answer user subjective_test question 2  as label %}{% if label %}checked{% endif %}>
+                    2
+                </label>
+                <label>
+                    <input type='radio' name="{{question.get_current_question_type_str}}-{{ question.id  }}" value="3"
+                        required {% is_CMOS_answer user subjective_test question 3  as label %}{% if label %}checked{% endif %}>
+                    3
+                </label>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+</form>
+
+{% endblock %}

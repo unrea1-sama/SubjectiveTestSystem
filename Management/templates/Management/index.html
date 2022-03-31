@@ -1,0 +1,55 @@
+{% extends "./template.html" %}
+{% block content %}
+<div class="card m-5">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 10%;">ID</th>
+                    <th scope="col" style="width: 60%">Name</th>
+                    <th scope="col" style="text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if all_tests %}
+                {% for test in all_tests %}
+                <tr>
+                    <th scope="row">{{ test.id }}</th>
+                    <td>{{ test.name }}</td>
+                    <td style="text-align: center;">
+                        
+                        <a href="{% url 'Management:enable' test.id %}">
+                            {% if test.enable %}
+                                <button type="button" class="btn btn-secondary">Stop</button>
+                            {% else %}
+                                <button type="button" class="btn btn-success">Start</button>
+                            {% endif %}
+                        </a>
+                        
+                        <a href="{% url 'Management:view' test.id %}"><button type="button"
+                                class="btn btn-primary">View</button></a>
+                        <a href="{% url 'Management:delete' test.id %}"><button type="button"
+                                class="btn btn-danger">Delete</button></a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h3>No test. Please add new test by uploading content.</h3>
+                {% endif %}
+                <tr>
+                    <td colspan="3" style="text-align: center;">
+                        <a href="{% url 'Management:new' %}" target="_blank">
+                            <button type="button" class="btn btn-success">Add New Test</button>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
