@@ -53,6 +53,7 @@ class Sample(models.Model):
     )
     score = models.BooleanField(help_text="Whether this sample is scored.", default=0)
     text = models.CharField(max_length=10240, help_text="Description.", default="")
+    original_name = models.CharField(max_length=4096,help_text='Original filename.',default='')
 
     @staticmethod
     def sample_type_to_str(type):

@@ -10,8 +10,10 @@ urlpatterns = [
     path("logout/", views.logout, name="logout"),
     # ex: /Management/test/
     path("test/", views.index, name="index"),
-    # ex: /Management/test/5
+    # ex: /Management/test/view/5
     path("test/view/<int:subjective_test_id>", views.view, name="view"),
+    # ex: /Management/test/export/5
+    path("test/export/<int:subjective_test_id>", views.export, name="export"),
     # ex: /Management/test/new/
     path("test/new/", views.new, name="new"),
     # ex: /Management/test/delete/5

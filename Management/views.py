@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .forms import LoginForm, NewTestForm
 from django.contrib.auth import (
@@ -18,6 +18,7 @@ from django.core.files import File
 from pathlib import Path
 from django.db import transaction
 import shutil
+from User.models import Answer
 
 # Create your views here.
 
@@ -58,6 +59,53 @@ def view(request, subjective_test_id):
 
 
 @login_required(login_url=login_url)
+def export(request, subjective_test_id):
+    subjective_test = get_object_or_404(SubjectiveTest, pk=subjective_test_id)
+    # SubjectiveTest -> Question -> Sample -> User -> Answer
+    # abx: answer.answer是sample id
+    # mos: answer.answer是给定的sample的mos得分
+    # cmos: answer.answer是给定的一组sample的CMOS得分
+    response = []
+    for question in subjective_test.question_set.all():
+        type = question.get_current_question_type_str()
+        q = {}
+        if type== 'ABX':
+            answers = Answer.objects.all().filter(subjective_test_id__exact=subjective_test_id,question_id__exact=question.id)
+            q['type'] = 'ABX'
+            q['ans'] = []
+            for answer in answers:
+                sample = Sample.objects.get(id__exact=answer.answer)
+                q['ans'].append({'name':sample.original_name,'user':answer.user.username})
+            response.append(q)
+        elif type=='MOS':
+            q['type'] = "MOS"
+            q['ans'] = []
+            for sample in question.sample_set.all():
+                if sample.score:
+                    answers = Answer.objects.all().filter(subjective_test_id__exact=subjective_test_id,question_id__exact=question.id,
+                    sample_id__exact=sample.id)
+                    qs = {'sample_name':sample.original_name,'ans':[]}
+                    for answer in answers:
+                        qs['ans'].append({'user':answer.user.username,'score':answer.answer})
+                    q['ans'].append(qs)
+            response.append(q)
+        elif type=='CMOS':
+            answers = Answer.objects.all().filter(subjective_test_id__exact=subjective_test_id,question_id__exact=question.id)
+            q['type'] = 'CMOS'
+            q['ans'] = []
+            q['samples'] = []
+            for answer in answers:
+                q['ans'].append({'user':answer.user.username,'score':answer.answer})
+            for sample in question.sample_set.all():
+                q['samples'].append(sample.original_name)
+            response.append(q)
+    return JsonResponse(response,safe=False)
+
+
+CONFIG_FILENAME = "config.json"
+
+
+@login_required(login_url=login_url)
 def new(request):
     if request.method == "POST":
         form = NewTestForm(request.POST, request.FILES)
@@ -70,9 +118,10 @@ def new(request):
                 for chunk in file.chunks():
                     destination.write(chunk)
             zip_file = zipfile.ZipFile(destination_name, "r", allowZip64=True)
-            if "test.json" in zip_file.namelist():
+            if CONFIG_FILENAME in zip_file.namelist():
                 zip_file.extractall(destination_dir_path)
-                with open(os.path.join(destination_dir_path, "test.json")) as f:
+                zip_file.close()
+                with open(os.path.join(destination_dir_path, CONFIG_FILENAME)) as f:
                     configuration_json = json.load(f)
                 try:
                     with transaction.atomic():
@@ -107,6 +156,7 @@ def new(request):
                                         score=sample_conf["score"],
                                         text=sample_conf["text"],
                                         file=File(f, name=path.name),
+                                        original_name=path.name,
                                     )
                                     sample.save()
                 except:
@@ -118,7 +168,7 @@ def new(request):
                     os.remove(destination_name)
                     return HttpResponseRedirect(reverse("Management:index"))
             else:
-                form.add_error("file", "can't find test.json in zip file!")
+                form.add_error("file", f"can't find {CONFIG_FILENAME} in zip file!")
 
     else:
         form = NewTestForm()

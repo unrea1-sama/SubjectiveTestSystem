@@ -79,10 +79,13 @@ def view(request, subjective_test_id):
                             user=request.user,
                         )
                     except (Sample.DoesNotExist, Question.DoesNotExist):
-                        continue
+                        pass
                     answer.answer = request.POST[key]
                     answer.save()
                 elif len(temp) == 2:
+                    # abx: POST[key]是sample id
+                    # mos: POST[key]是给定的sample的mos得分
+                    # cmos: POST[key]是给定的一组sample的CMOS得分
                     _, question_id = temp
                     try:
                         question = Question.objects.get(id=question_id)

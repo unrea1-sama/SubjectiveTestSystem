@@ -6,7 +6,7 @@
             <thead>
                 <tr>
                     <th scope="col" style="width: 10%;">ID</th>
-                    <th scope="col" style="width: 60%">Name</th>
+                    <th scope="col" style="width: 50%">Name</th>
                     <th scope="col" style="text-align: center;">Action</th>
                 </tr>
             </thead>
@@ -17,17 +17,19 @@
                     <th scope="row">{{ test.id }}</th>
                     <td>{{ test.name }}</td>
                     <td style="text-align: center;">
-                        
+
                         <a href="{% url 'Management:enable' test.id %}">
                             {% if test.enable %}
-                                <button type="button" class="btn btn-secondary">Stop</button>
+                            <button type="button" class="btn btn-secondary">Stop</button>
                             {% else %}
-                                <button type="button" class="btn btn-success">Start</button>
+                            <button type="button" class="btn btn-success">Start</button>
                             {% endif %}
                         </a>
-                        
+
                         <a href="{% url 'Management:view' test.id %}"><button type="button"
                                 class="btn btn-primary">View</button></a>
+                        <a href="{% url 'Management:export' test.id %}"><button type='button'
+                                class='btn btn-primary'>Export</button></a>
                         <a href="{% url 'Management:delete' test.id %}"><button type="button"
                                 class="btn btn-danger">Delete</button></a>
                     </td>
