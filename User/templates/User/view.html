@@ -4,6 +4,7 @@
 {% load ABX %}
 {% load MOS %}
 {% load CMOS %}
+{% load shuffle %}
 <form method='post' action="{% url 'User:view' subjective_test.id %}" class="form">
     {% csrf_token %}
     <div class="card m-5">
@@ -57,7 +58,7 @@
                 <h6 class="card-subtitle mb-2 text-muted"></h6>
                 <p class="card-text">{{ question.text }}</p>
                 <ul class="list-group list-group-flush">
-                    {% for sample in question.sample_set.all %}
+                    {% for sample in question.sample_set.all|shuffle %}
                     <li class="list-group-item">
                         {% if sample.file_type %}
                         <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
