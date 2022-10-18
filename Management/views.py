@@ -64,7 +64,7 @@ def export(request, subjective_test_id):
     # SubjectiveTest -> Question -> Sample -> User -> Answer
     # abx: answer.answer是sample id
     # mos: answer.answer是给定的sample的mos得分
-    # cmos: answer.answer是给定的一组sample的CMOS得分
+    # cmos: answer.answer是给定的sample的CMOS得分
     response = []
     for question in subjective_test.question_set.all():
         type = question.get_current_question_type_str()
@@ -90,14 +90,16 @@ def export(request, subjective_test_id):
                     q['ans'].append(qs)
             response.append(q)
         elif type=='CMOS':
-            answers = Answer.objects.all().filter(subjective_test_id__exact=subjective_test_id,question_id__exact=question.id)
             q['type'] = 'CMOS'
             q['ans'] = []
-            q['samples'] = []
-            for answer in answers:
-                q['ans'].append({'user':answer.user.username,'score':answer.answer})
             for sample in question.sample_set.all():
-                q['samples'].append(sample.original_name)
+                if sample.score:
+                    answers = Answer.objects.all().filter(subjective_test_id__exact=subjective_test_id,question_id__exact=question.id,
+                    sample_id__exact=sample.id)
+                    qs = {'sample_name':sample.original_name,'ans':[]}
+                    for answer in answers:
+                        qs['ans'].append({'user':answer.user.username,'score':answer.answer})
+                    q['ans'].append(qs)
             response.append(q)
     return JsonResponse(response,safe=False)
 

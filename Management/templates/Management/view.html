@@ -12,9 +12,9 @@
                     {% for sample in question.sample_set.all %}
                         <li class="list-group-item">
                         {% if sample.file_type %}
-                            <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support video!</video>
+                            <video src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support video!</video>
                         {% else %}
-                            <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support audio!</audio>
+                            <audio src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support audio!</audio>
                         {% endif %}
                         <p class="mb-0">{{ sample.text }}</p>
                         </li>

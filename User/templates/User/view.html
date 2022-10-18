@@ -22,10 +22,10 @@
                         <div>
                             {{ sample.id }}
                             {% if sample.file_type %}
-                            <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                            <video src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support
                                 video!</video>
                             {% else %}
-                            <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                            <audio src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support
                                 audio!</audio>
                             {% endif %}
                         </div>
@@ -61,10 +61,10 @@
                     {% for sample in question.sample_set.all|shuffle %}
                     <li class="list-group-item">
                         {% if sample.file_type %}
-                        <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                        <video src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support
                             video!</video>
                         {% else %}
-                        <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                        <audio src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support
                             audio!</audio>
                         {% endif %}
                         <p class="mb-0">{{ sample.text }}</p>
@@ -115,57 +115,62 @@
                 <h6 class="card-subtitle mb-2 text-muted"></h6>
                 <p class="card-text">{{ question.text }}</p>
                 <ul class="list-group list-group-flush">
-                    {% for sample in question.sample_set.all %}
+                    {% for sample in question.sample_set.all|shuffle %}
                     <li class="list-group-item">
                         <p class="mb-0">{{ sample.text }}</p>
                         <div>
                             {{ sample.id }}
                             {% if sample.file_type %}
-                            <video src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                            <video src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support
                                 video!</video>
                             {% else %}
-                            <audio src="{{ sample.file.url }}" controls="controls">Your browser doesn't support
+                            <audio src="{{ sample.file.url }}" controls="controls" preload="none">Your browser doesn't support
                                 audio!</audio>
                             {% endif %} 
+                            <div>
+                                {% if sample.score %}
+                                <label>
+                                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}-{{ sample.id }}" value="-3"
+                                        required {% is_CMOS_answer user subjective_test question sample -3 as label %}{% if label %}checked{% endif %}>
+                                    -3
+                                </label>
+                                <label>
+                                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}-{{ sample.id }}" value="-2"
+                                        required {% is_CMOS_answer user subjective_test question sample -2 as label %}{% if label %}checked{% endif %}>
+                                    -2
+                                </label>
+                                <label>
+                                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}-{{ sample.id }}" value="-1"
+                                        required {% is_CMOS_answer user subjective_test question sample -1 as label %}{% if label %}checked{% endif %}>
+                                    -1
+                                </label>
+                                <label>
+                                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}-{{ sample.id }}" value="0"
+                                        required {% is_CMOS_answer user subjective_test question sample 0 as label %}{% if label %}checked{% endif %}>
+                                    0
+                                </label>
+                                <label>
+                                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}-{{ sample.id }}" value="1"
+                                        required {% is_CMOS_answer user subjective_test question sample 1 as label %}{% if label %}checked{% endif %}>
+                                    1
+                                </label>
+                                <label>
+                                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}-{{ sample.id }}" value="2"
+                                        required {% is_CMOS_answer user subjective_test question sample 2 as label %}{% if label %}checked{% endif %}>
+                                    2
+                                </label>
+                                <label>
+                                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}-{{ sample.id }}" value="3"
+                                        required {% is_CMOS_answer user subjective_test question sample 3 as label %}{% if label %}checked{% endif %}>
+                                    3
+                                </label>
+                                {% endif %}
+                            </div>
                         </div>
                     </li>
                     {% endfor %}
                 </ul>
-                <label>
-                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}" value="-3"
-                        required {% is_CMOS_answer user subjective_test question -3  as label %}{% if label %}checked{% endif %}>
-                    -3
-                </label>
-                <label>
-                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}" value="-2"
-                        required {% is_CMOS_answer user subjective_test question -2  as label %}{% if label %}checked{% endif %}>
-                    -2
-                </label>
-                <label>
-                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}" value="-1"
-                        required {% is_CMOS_answer user subjective_test question -1  as label %}{% if label %}checked{% endif %}>
-                    -1
-                </label>
-                <label>
-                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}" value="0"
-                        required {% is_CMOS_answer user subjective_test question 0  as label %}{% if label %}checked{% endif %}>
-                    0
-                </label>
-                <label>
-                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}" value="1"
-                        required {% is_CMOS_answer user subjective_test question 1  as label %}{% if label %}checked{% endif %}>
-                    1
-                </label>
-                <label>
-                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}" value="2"
-                        required {% is_CMOS_answer user subjective_test question 2  as label %}{% if label %}checked{% endif %}>
-                    2
-                </label>
-                <label>
-                    <input type='radio' name="{{ question.get_current_question_type_str }}-{{ question.id  }}" value="3"
-                        required {% is_CMOS_answer user subjective_test question 3  as label %}{% if label %}checked{% endif %}>
-                    3
-                </label>
+
             </div>
         </div>
         {% endif %}
